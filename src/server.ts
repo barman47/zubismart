@@ -41,6 +41,8 @@ if (process.env.NODE_ENV === 'production') {
         res.sendFile(path.resolve(publicPath, 'index.html'));
     });
 }
+
+app.get('/', (_, res) => res.send('It works'));
     
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log(colors.blue(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`)));

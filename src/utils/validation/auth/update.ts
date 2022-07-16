@@ -2,7 +2,7 @@ import Validator from 'validator';
 import { isEmpty } from '../../isEmpty';
 
 import { User } from '../../../models/User';
-import { ErrorObject, Gender, Genders, Role, UserRole } from '../../constants';
+import { ErrorObject, Role, UserRole } from '../../constants';
 
 export const validateUpdateUser = (data: User): ErrorObject<User> => {
     let errors = {} as User;
@@ -11,7 +11,6 @@ export const validateUpdateUser = (data: User): ErrorObject<User> => {
     data.firstName = !isEmpty(data.firstName) ?  data.firstName : '';
     data.lastName = !isEmpty(data.lastName) ?  data.lastName : '';
     data.role = !isEmpty(data.role) ?  data.role : '' as UserRole;
-    data.gender = !isEmpty(data.gender) ?  data.gender : '' as Gender;
 
     if (!Validator.isEmail(data.email)) {
         errors.email = 'Invalid Email Address!';
@@ -33,13 +32,6 @@ export const validateUpdateUser = (data: User): ErrorObject<User> => {
     }
     if (Validator.isEmpty(data.role)) {
         errors.role = 'User role is required!' as UserRole;
-    }
-
-    if (!(data.gender.toUpperCase() in Genders)) {
-        errors.gender = `Invalid gender '${data.gender}'!` as Gender;
-    }
-    if (Validator.isEmpty(data.gender)) {
-        errors.gender = 'Gender is required!' as Gender;
     }
     
     return {

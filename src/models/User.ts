@@ -3,44 +3,20 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
-import { Gender, Genders, Role, Classes, StudentClass, UserRole, UserStatus } from '../utils/constants';
-
-export interface PastClass {
-    session: string;
-    pastClass: StudentClass;
-}
-
-export interface SubjectTaught {
-    _id?: string;
-    selectedClass: StudentClass;
-    subject: string;
-    staffId: string;
-}
+import { Role, UserRole } from '../utils/constants';
 
 export interface User extends Document {
     _id?: string;
-    firstName: string;
-    middleName?: string;
-    lastName: string;
     email: string;
-    admissionNumber?: string;
+    firstName: string;
+    lastName: string;
     password?: string;
     confirmPassword?: string;
-    address?: String,
-    phone?: String,
-    disabled?: boolean;
+    address?: String;
+    phone?: String;
     createdAt?: Date;
-    updatedAt?: Date;
-    lastSeen?: Date;
-    avatar?: string;
-    avatarKey?: string;
-    subjectsTaught?: SubjectTaught[];
-    currentClass?: StudentClass;
-    pastClasses?: PastClass[];
-    classOwned?: StudentClass; 
-    gender: Gender;
+    updatedAt?: Date; 
     role: UserRole;
-    status: UserStatus;
     resetPasswordToken?: string;
     resetPasswordExpire?: Date;
     matchPassword(password: string): boolean;
@@ -71,17 +47,6 @@ const UserSchema = new Schema<User>({
         trim: true
     },
 
-    middleName: {
-        type: String,
-        uppercase: true,
-        trim: true
-    },
-
-    admissionNumber: {
-        type: String,
-        uppercase: true
-    },
-
     password: {
         type: String,
         required: [true, 'Password is required!'],
@@ -103,87 +68,7 @@ const UserSchema = new Schema<User>({
     role: {
         type: String,
         required: true,
-        enum: [Role.ADMIN, Role.STUDENT, Role.TEACHER, Role.FORM_TEACHER, Role.RECTOR],
-        uppercase: true,
-        trim: true
-    },
-
-    status: {
-        type: String,
-        required: true,
-        enum: [UserStatus.PRESENT, UserStatus.TRANSFERRED, UserStatus.GRADUATED],
-        default: UserStatus.PRESENT,
-        uppercase: true,
-        trim: true
-    },
-
-    disabled: {
-        type: Boolean,
-        default: false
-    },
-
-    lastSeen: {
-        type: Date
-    },
-
-    avatar: {
-        type: String,
-    },
-
-    avatarKey: {
-        type: String,
-    },
-
-    currentClass: {
-        type: String,
-        enum: [Classes.JS1, Classes.JS2, Classes.JS3, Classes.SS1, Classes.SS2, Classes.SS3]
-    },
-        
-    pastClasses: [
-        {
-            session: {
-                type: String,
-                trim: true
-            },
-            pastClass: {
-                type: String,
-                uppercase: true,
-                trim: true
-            }
-        }
-    ],
-
-    classOwned: {
-        type: String,
-        enum: [Classes.JS1, Classes.JS2, Classes.JS3, Classes.SS1, Classes.SS2, Classes.SS3, ''],
-        trim: true
-    },
-
-    // to show the classes and subject the teacher teaches
-    subjectsTaught: [
-        {
-            selectedClass: {
-                type: String,
-                enum: [Classes.JS1, Classes.JS2, Classes.JS3, Classes.SS1, Classes.SS2, Classes.SS3],
-                trim: true
-            },
-
-            subject: {
-                type: Schema.Types.ObjectId
-            },
-
-            staffId: {
-                type: Schema.Types.ObjectId,
-                ref: 'User',
-                required: [true, 'Staff ID is required!']
-            }
-        }
-    ],
-
-    gender: {
-        type: String,
-        required: [true, 'Gender is required!'],
-        enum: [Genders.MALE, Genders.FEMALE],
+        enum: [Role.ADMIN, Role.USER],
         uppercase: true,
         trim: true
     },
@@ -208,7 +93,7 @@ UserSchema.pre('save', async function(next) {
     next();
 });
 
-// Sig JWT and return
+// Sign JWT and return
 UserSchema.methods.getSignedJwtToken = function () {
     // const secret: Secret = !;
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET!, {

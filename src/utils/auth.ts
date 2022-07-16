@@ -36,16 +36,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
         // Verify token
         const decoded = jwt.verify(token, process.env.JWT_SECRET!);
         const { id } = decoded as TokenPayload;
-        const user = await UserModel.findById(id);
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                errors: {
-                    msg: 'Not authorized to access this resource'
-                }
-            });
-        }
-        req.user = user;
+        req.user = await UserModel.findById(id)
         next();
     } catch (err) {
         return res.status(401).json({

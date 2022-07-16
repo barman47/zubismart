@@ -19,6 +19,7 @@ export function controller (routePrefix: string) {
             // const validator = bodyValidators(requiredBodyProps);
 
             if (path) {
+                console.log('Path ', path);
                 router[method](`/api${routePrefix}${path}`, ...middlewares, routeHandler);
             }
         }
