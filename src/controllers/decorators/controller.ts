@@ -8,7 +8,8 @@ export function controller (routePrefix: string) {
     return function (target: Function) {
         const router = AppRouter.getInstance();
 
-        for (let key in target.prototype) {
+        for (let key of Object.getOwnPropertyNames(target.prototype)) {
+            console.log('Running ', key);
             const routeHandler = target.prototype[key];
             const path = Reflect.getMetadata(MetadataKeys.path, target.prototype, key);
             const method: Methods = Reflect.getMetadata(MetadataKeys.method, target.prototype, key);
@@ -19,7 +20,6 @@ export function controller (routePrefix: string) {
             // const validator = bodyValidators(requiredBodyProps);
 
             if (path) {
-                console.log('Path ', path);
                 router[method](`/api${routePrefix}${path}`, ...middlewares, routeHandler);
             }
         }

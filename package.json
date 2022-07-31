@@ -6,7 +6,7 @@
     "scripts": {
       "watch": "tsc -w",
       "start": "node build/server.js",
-      "server": "ts-node --files src/server.ts"
+      "server": "ts-node-dev --respawn --pretty --transpile-only --clear src/server.ts"
     },
     "keywords": [
       "NodeSJ",
